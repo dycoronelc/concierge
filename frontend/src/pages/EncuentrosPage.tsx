@@ -33,10 +33,7 @@ import { encuentrosApi, eventosApi, ticketsApi, providersApi } from '@/services/
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-
 export default function EncuentrosPage() {
-  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const queryClient = useQueryClient();

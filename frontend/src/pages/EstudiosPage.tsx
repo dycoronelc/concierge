@@ -22,22 +22,17 @@ import {
   Select,
   FormControl,
   InputLabel,
-  Tabs,
-  Tab,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import ScienceIcon from '@mui/icons-material/Science';
 import { estudiosApi, patientsApi, eventosApi } from '@/services/api';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 
 const TIPOS_ESTUDIO = ['Sangre', 'Orina', 'Heces', 'Imagen', 'Genético', 'Genómico', 'Otro'];
-const ESTADOS = ['Solicitado', 'Autorizado', 'Programado', 'En_Proceso', 'Completado', 'Cancelado'];
 
 export default function EstudiosPage() {
   const queryClient = useQueryClient();
-  const [tabValue, setTabValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [formData, setFormData] = useState({
     patient_id: '',

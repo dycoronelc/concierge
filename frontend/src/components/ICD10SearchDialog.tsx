@@ -43,7 +43,7 @@ export default function ICD10SearchDialog({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  const { data: results, isLoading, refetch } = useQuery({
+  const { data: results, isLoading } = useQuery({
     queryKey: ['icd10-search', searchTerm],
     queryFn: () => icd10Api.search(searchTerm, 20).then((res) => res.data),
     enabled: searchTerm.length >= 2,

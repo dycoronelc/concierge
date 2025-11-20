@@ -57,23 +57,36 @@ En Railway Dashboard:
 
 ## 🎯 Opción 2: Desplegar desde Railway Dashboard
 
+### ⚠️ IMPORTANTE: Necesitas Crear DOS Servicios Separados
+
+Railway requiere que crees **servicios separados** para backend y frontend. Cada uno debe tener su propio Root Directory.
+
 ### Paso 1: Crear Proyecto
 
 1. Ve a [railway.app](https://railway.app)
 2. Haz clic en "New Project"
 3. Selecciona "Deploy from GitHub repo" (o "Empty Project" si prefieres)
 
-### Paso 2: Desplegar Backend
+### Paso 2: Crear Servicio del Backend
 
-1. En el proyecto, haz clic en "New Service"
-2. Selecciona "GitHub Repo" y elige tu repositorio
-3. En "Root Directory", escribe: `backend`
-4. Railway detectará automáticamente:
+1. En el proyecto, haz clic en **"New Service"**
+2. Selecciona **"GitHub Repo"** y elige tu repositorio
+3. **IMPORTANTE**: Busca **"Root Directory"** o **"Show Advanced Options"**
+   - Si no lo ves, haz clic en "Configure" o "Show Advanced Options"
+4. En **"Root Directory"**, escribe: `backend` (sin comillas, sin `/` al inicio)
+   - ⚠️ **Este paso es CRÍTICO** - Si no configuras el Root Directory, Railway intentará ejecutar `npm run build` desde la raíz y fallará
+5. Railway detectará automáticamente:
    - Tipo: Node.js
    - Build Command: `npm install && npm run build`
    - Start Command: `npm run start:prod`
+6. Si Railway no detecta automáticamente, configura manualmente:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run start:prod`
+7. Haz clic en **"Deploy"** o **"Add Service"**
 
-### Paso 3: Configurar Variables de Entorno del Backend
+**📖 Consulta [RAILWAY_SERVICIOS_SEPARADOS.md](./RAILWAY_SERVICIOS_SEPARADOS.md) para instrucciones detalladas**
+
+### Paso 4: Configurar Variables de Entorno del Backend
 
 En el servicio del backend, ve a "Variables" y agrega:
 
@@ -98,15 +111,24 @@ PORT=3000
 NODE_ENV=production
 ```
 
-### Paso 4: Desplegar Frontend
+### Paso 3: Crear Servicio del Frontend
 
-1. En el mismo proyecto, haz clic en "New Service"
-2. Selecciona "GitHub Repo" y elige tu repositorio
-3. En "Root Directory", escribe: `frontend`
-4. Railway detectará automáticamente:
+1. En el **mismo proyecto**, haz clic en **"New Service"** nuevamente
+2. Selecciona **"GitHub Repo"** y elige el **mismo repositorio**
+3. **IMPORTANTE**: Busca **"Root Directory"** o **"Show Advanced Options"**
+   - Si no lo ves, haz clic en "Configure" o "Show Advanced Options"
+4. En **"Root Directory"**, escribe: `frontend` (sin comillas, sin `/` al inicio)
+   - ⚠️ **Este paso es CRÍTICO** - Si no configuras el Root Directory, Railway intentará ejecutar `npm run build` desde la raíz y fallará
+5. Railway detectará automáticamente:
    - Tipo: Node.js (Vite)
    - Build Command: `npm install && npm run build`
    - Start Command: `npm run preview`
+6. Si Railway no detecta automáticamente, configura manualmente:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm run preview`
+7. Haz clic en **"Deploy"** o **"Add Service"**
+
+**📖 Consulta [RAILWAY_SERVICIOS_SEPARADOS.md](./RAILWAY_SERVICIOS_SEPARADOS.md) para instrucciones detalladas**
 
 ### Paso 5: Configurar Variables de Entorno del Frontend
 
@@ -197,6 +219,14 @@ railway status
 2. Deberías ver la aplicación React funcionando
 
 ## 🐛 Solución de Problemas
+
+### Error: "Could not read package.json" o "ENOENT: no such file or directory"
+- **Causa**: Railway está ejecutando comandos desde la raíz del proyecto en lugar de `backend/` o `frontend/`
+- **Solución**: 
+  1. Ve a Settings del servicio en Railway Dashboard
+  2. Configura **Root Directory** como `backend` o `frontend` según corresponda
+  3. Guarda y haz redeploy
+  4. Consulta [RAILWAY_MONOREPO.md](./RAILWAY_MONOREPO.md) para más detalles
 
 ### Error: "Cannot find module"
 - **Solución**: Asegúrate de que `package.json` tenga todas las dependencias listadas

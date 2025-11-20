@@ -31,7 +31,6 @@ import {
   Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
 import { nutricionApi, patientsApi, eventosApi } from '@/services/api';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -39,7 +38,6 @@ import { toast } from 'react-toastify';
 import { useAuthStore } from '@/store/authStore';
 
 const NIVELES_ACTIVIDAD = ['Sedentario', 'Ligero', 'Moderado', 'Intenso', 'Muy_Intenso'];
-const ESTADOS_PLAN = ['Activo', 'Pausado', 'Completado', 'Cancelado'];
 const NIVELES_ENERGIA = ['Muy_Bajo', 'Bajo', 'Normal', 'Alto', 'Muy_Alto'];
 const ADHERENCIAS = ['Baja', 'Media', 'Alta', 'Completa'];
 

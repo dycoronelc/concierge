@@ -19,20 +19,17 @@ import {
   DialogActions,
   MenuItem,
   Grid,
-  IconButton,
   Select,
   FormControl,
   InputLabel,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
 import { enfermeriaApi, patientsApi } from '@/services/api';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 
 const TIPOS_CUIDADO = ['Heridas', 'Inyecciones', 'Educación', 'Monitoreo', 'Otro'];
-const ESTADOS = ['Solicitado', 'Asignado', 'En_Camino', 'En_Proceso', 'Completado', 'Cancelado'];
 
 export default function EnfermeriaPage() {
   const queryClient = useQueryClient();

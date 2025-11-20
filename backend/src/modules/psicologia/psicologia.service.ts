@@ -345,7 +345,7 @@ export class PsicologiaService {
   async findAllSeguimientosEmocionales(params?: {
     patient_id?: string;
     sesion_id?: string;
-    alerta_critica?: boolean;
+    alerta_critica?: boolean | string | number;
   }): Promise<SeguimientoEmocional[]> {
     try {
       const query = this.seguimientoRepo
@@ -369,7 +369,13 @@ export class PsicologiaService {
 
       if (params?.alerta_critica !== undefined) {
         conditions.push('seguimiento.alerta_critica = :alerta_critica');
-        queryParams.alerta_critica = params.alerta_critica === true || params.alerta_critica === 'true' || params.alerta_critica === 1;
+        // Normalizar a boolean (acepta boolean, string 'true'/'false', o número 1/0)
+        const alertaCriticaValue = params.alerta_critica;
+        queryParams.alerta_critica = 
+          alertaCriticaValue === true || 
+          alertaCriticaValue === 'true' || 
+          alertaCriticaValue === '1' ||
+          alertaCriticaValue === 1;
       }
 
       if (conditions.length > 0) {

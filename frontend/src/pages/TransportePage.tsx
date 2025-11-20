@@ -26,20 +26,15 @@ import {
   Tab,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { transporteApi, patientsApi } from '@/services/api';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
 
 const TIPOS_TRASLADO = ['Ordinario', 'Asistido', 'Urgente', 'Ambulancia'];
-const ESTADOS = ['Solicitado', 'Asignado', 'En_Camino_Origen', 'En_Origen', 'En_Traslado', 'Completado', 'Cancelado'];
 
 export default function TransportePage() {
   const queryClient = useQueryClient();
   const [tabValue, setTabValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
-  const [openVehiculoDialog, setOpenVehiculoDialog] = useState(false);
   const [formData, setFormData] = useState({
     patient_id: '',
     tipo_traslado: 'Ordinario',
@@ -151,20 +146,21 @@ export default function TransportePage() {
           Transporte y Logística
         </Typography>
         <Box gap={1} display="flex">
-          <Button
+          {/* TODO: Implementar diálogo de vehículos */}
+          {/* <Button
             variant="outlined"
             startIcon={<DirectionsCarIcon />}
             onClick={() => setOpenVehiculoDialog(true)}
           >
             Vehículos
-          </Button>
+          </Button> */}
           <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenDialog}>
             Nueva Solicitud
           </Button>
         </Box>
       </Box>
 
-      <Tabs value={tabValue} onChange={(e, v) => setTabValue(v)} sx={{ mb: 2 }}>
+      <Tabs value={tabValue} onChange={(_e, v) => setTabValue(v)} sx={{ mb: 2 }}>
         <Tab label="Solicitudes" />
         <Tab label="Vehículos" />
       </Tabs>

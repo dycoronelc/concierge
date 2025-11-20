@@ -9,8 +9,6 @@ import {
   Chip,
   Button,
   Avatar,
-  useMediaQuery,
-  useTheme,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -20,7 +18,6 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
-  Divider,
   Alert,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -34,8 +31,6 @@ import { toast } from 'react-toastify';
 export default function TicketDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);

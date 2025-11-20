@@ -8,12 +8,10 @@ import {
   CardContent,
   CircularProgress,
   Chip,
-  useTheme,
 } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
@@ -35,12 +33,10 @@ import {
 } from 'recharts';
 import { statisticsApi } from '@/services/api';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
 export default function DashboardPage() {
-  const theme = useTheme();
   const { data: dashboardStats, isLoading: loadingDashboard } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: () => statisticsApi.getDashboardStats().then((res) => res.data),
@@ -262,7 +258,7 @@ export default function DashboardPage() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {(dashboardStats?.ticketsByStatus || []).map((entry: any, index: number) => (
+                  {(dashboardStats?.ticketsByStatus || []).map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -405,7 +401,7 @@ export default function DashboardPage() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {(dashboardStats?.eventosByStatus || []).map((entry: any, index: number) => (
+                  {(dashboardStats?.eventosByStatus || []).map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -482,7 +478,7 @@ export default function DashboardPage() {
                   }}
                 />
                 <Bar dataKey="count" fill="#8884d8" radius={[0, 4, 4, 0]}>
-                  {(diagnosticStats?.topDiagnostics || []).map((entry: any, index: number) => (
+                  {(diagnosticStats?.topDiagnostics || []).map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>
@@ -508,7 +504,7 @@ export default function DashboardPage() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {(diagnosticStats?.diagnosticsByCategory || []).map((entry: any, index: number) => (
+                  {(diagnosticStats?.diagnosticsByCategory || []).map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -534,7 +530,7 @@ export default function DashboardPage() {
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="value" fill="#82ca9d" radius={[4, 4, 0, 0]}>
-                  {(diagnosticStats?.diagnosticsBySeverity || []).map((entry: any, index: number) => (
+                  {(diagnosticStats?.diagnosticsBySeverity || []).map((_entry: any, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>

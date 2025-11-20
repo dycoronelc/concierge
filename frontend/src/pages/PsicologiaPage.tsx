@@ -30,9 +30,8 @@ import {
   IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import PsychologyIcon from '@mui/icons-material/Psychology';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { psicologiaApi, patientsApi, eventosApi } from '@/services/api';
+import { psicologiaApi, patientsApi } from '@/services/api';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'react-toastify';
@@ -40,9 +39,7 @@ import { useAuthStore } from '@/store/authStore';
 
 const TIPOS_CONSULTA = ['Psicologica', 'Psiquiatrica'];
 const MODALIDADES = ['Presencial', 'Telefonica', 'Videollamada'];
-const ESTADOS_CONSULTA = ['Solicitada', 'Confirmada', 'En_Proceso', 'Completada', 'Cancelada'];
 const TIPOS_SESION = ['Individual', 'Grupal', 'Familiar'];
-const ESTADOS_SESION = ['Programada', 'En_Curso', 'Completada', 'Cancelada', 'No_Asistio'];
 const ESTADOS_ANIMO = ['Muy_Positivo', 'Positivo', 'Neutro', 'Negativo', 'Muy_Negativo', 'Ansioso', 'Deprimido', 'Eufórico'];
 
 function TabPanel({ children, value, index }: { children: React.ReactNode; value: number; index: number }) {
@@ -151,10 +148,6 @@ export default function PsicologiaPage() {
     queryFn: () => patientsApi.getAll().then((res) => res.data),
   });
 
-  const { data: eventos } = useQuery({
-    queryKey: ['eventos'],
-    queryFn: () => eventosApi.getAll().then((res) => res.data),
-  });
 
   const { data: familiares } = useQuery({
     queryKey: ['psicologia-familiares', selectedPatientId],

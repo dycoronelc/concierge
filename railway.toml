@@ -1,0 +1,10 @@
+# Configuración de Railway para Monorepo
+# Este archivo ayuda a Railway a entender la estructura del proyecto
+
+[build]
+builder = "NIXPACKS"
+
+# Nota: Railway necesita que configures el "Root Directory" en el Dashboard
+# Backend: Root Directory = "backend"
+# Frontend: Root Directory = "frontend"
+
