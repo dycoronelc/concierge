@@ -1,0 +1,134 @@
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
+const TWOCHAT_API_KEY = Deno.env.get('TWOCHAT_API_KEY');
+const TWOCHAT_BASE_URL = Deno.env.get('TWOCHAT_BASE_URL') ?? 'https://api.p.2chat.io';
+const TWOCHAT_FROM_NUMBER = Deno.env.get('TWOCHAT_FROM_NUMBER');
+const jsonHeaders = {
+  ...corsHeaders,
+  'Content-Type': 'application/json'
+};
+function jsonResponse(data, init = {}) {
+  return new Response(JSON.stringify(data), {
+    ...init,
+    headers: {
+      ...jsonHeaders,
+      ...init.headers ?? {}
+    }
+  });
+}
+Deno.serve(async (req)=>{
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: corsHeaders
+    });
+  }
+  if (req.method !== 'POST') {
+    return jsonResponse({
+      error: 'Method not allowed'
+    }, {
+      status: 405
+    });
+  }
+  let body;
+  try {
+    body = await req.json();
+  } catch (error) {
+    console.error('Error leyendo el cuerpo de la petición:', error);
+    return jsonResponse({
+      error: 'Invalid JSON body'
+    }, {
+      status: 400
+    });
+  }
+  const { phone, message, type = 'text', mediaUrl, mediaUrls, apiKey, baseUrl, fromNumber } = body ?? {};
+  if (!phone || !message) {
+    return jsonResponse({
+      error: 'Campos requeridos: phone, message'
+    }, {
+      status: 400
+    });
+  }
+  const activeApiKey = TWOCHAT_API_KEY ?? (typeof apiKey === 'string' ? apiKey : undefined);
+  const base = typeof baseUrl === 'string' && baseUrl.length > 0 ? baseUrl : TWOCHAT_BASE_URL;
+  const activeFromNumber = typeof fromNumber === 'string' && fromNumber.length > 0 ? fromNumber : TWOCHAT_FROM_NUMBER;
+  if (!activeApiKey) {
+    console.error('API Key no proporcionada ni configurada');
+    return jsonResponse({
+      error: 'Falta API Key de 2Chat'
+    }, {
+      status: 400
+    });
+  }
+  if (!activeFromNumber) {
+    console.error('fromNumber no proporcionado ni configurado');
+    return jsonResponse({
+      error: 'Falta número remitente (fromNumber)'
+    }, {
+      status: 400
+    });
+  }
+  const endpoint = `${base}/open/whatsapp/send-message`;
+  const urls = Array.isArray(mediaUrls) ? mediaUrls : mediaUrl ? [
+    mediaUrl
+  ] : [];
+  const payload = {
+    to_number: phone,
+    from_number: activeFromNumber,
+    text: message
+  };
+  if (urls.length > 0) {
+    payload.url = urls[0];
+    if (urls.length > 1) {
+      payload.urls = urls;
+    }
+  }
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${activeApiKey}`,
+        'X-User-API-Key': activeApiKey
+      },
+      body: JSON.stringify(payload)
+    });
+    const text = await response.text();
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {
+        success: true
+      };
+    } catch  {
+      data = {
+        raw: text
+      };
+    }
+    if (!response.ok) {
+      console.error('Error desde 2Chat:', {
+        status: response.status,
+        body: data
+      });
+      return jsonResponse({
+        error: '2Chat request failed',
+        status: response.status,
+        body: data
+      }, {
+        status: response.status
+      });
+    }
+    return jsonResponse({
+      success: true,
+      data
+    });
+  } catch (error) {
+    console.error('Error enviando mensaje a 2Chat:', error);
+    return jsonResponse({
+      error: 'Fetch to 2Chat failed'
+    }, {
+      status: 502
+    });
+  }
+});

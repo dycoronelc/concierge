@@ -1,0 +1,28 @@
+# Archivos y carpetas a ignorar en Railway
+node_modules/
+.git/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+dist/
+build/
+coverage/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de Firebase (ya no se usan)
+firebase.json
+.firebaserc
+
+# Archivos de Cloud Build (ya no se usan)
+cloudbuild.yaml
+
+# Archivos de documentación (opcional, puedes incluirlos si quieres)
+*.md
+!README.md
+
