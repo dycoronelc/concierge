@@ -48,7 +48,13 @@ concierge/
 
 ## 🚀 Despliegue
 
-Este proyecto está configurado para desplegarse en [Railway](https://railway.app). Consulta la [guía de despliegue](./DEPLOY_RAILWAY.md) para más detalles.
+Este proyecto está configurado para desplegarse en [Railway](https://railway.app). 
+
+**Guías de despliegue:**
+- [Guía de Despliegue en Railway](./DEPLOY_RAILWAY.md) - Pasos iniciales de despliegue
+- [Pasos Post-Deployment](./POST_DEPLOYMENT_RAILWAY.md) ⭐ **NUEVO** - Configuración después del despliegue
+- [Configuración de Monorepo](./RAILWAY_MONOREPO.md) - Configurar monorepo en Railway
+- [Servicios Separados](./RAILWAY_SERVICIOS_SEPARADOS.md) - Crear servicios separados
 
 ## 🔐 Variables de Entorno
 
