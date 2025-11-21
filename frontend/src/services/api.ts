@@ -4,8 +4,13 @@ import axios from 'axios';
 // En desarrollo, usar localhost
 const API_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.PROD 
-    ? '' // Se configurará con la variable de entorno VITE_API_URL en Railway
+    ? 'https://concierge-back-production.up.railway.app' // Fallback si VITE_API_URL no está configurada
     : 'http://localhost:3000');
+
+// Validar que API_URL esté configurada en producción
+if (import.meta.env.PROD && !API_URL) {
+  console.error('⚠️ VITE_API_URL no está configurada. Las peticiones al backend fallarán.');
+}
 
 export const api = axios.create({
   baseURL: API_URL,
