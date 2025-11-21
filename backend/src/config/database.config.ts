@@ -36,8 +36,11 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       // finalHost = hostIPv6.trim(); // Comentado: Railway puede no soportar IPv6
     }
     
-    // Determinar puerto: pooler usa 6543 por defecto, directo usa 5432
-    const defaultPort = isPooler ? 6543 : 5432;
+    // Determinar puerto: 
+    // - Pooler: 5432 (transaction mode, recomendado) o 6543 (session mode)
+    // - Directo: 5432 (puerto estándar PostgreSQL)
+    // Si el usuario especifica DB_PORT, se respeta; si no, usamos 5432 por defecto
+    const defaultPort = 5432; // 5432 funciona para ambos (pooler transaction mode y directo)
     const port = this.configService.get<number>('DB_PORT', defaultPort);
     
     // Supabase siempre requiere SSL, y producción también
@@ -64,6 +67,17 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       ssl: needsSSL ? {
         rejectUnauthorized: false,
       } : false,
+      // Configuración de conexión para evitar bloqueos
+      connectTimeoutMS: 10000, // 10 segundos timeout
+      extra: {
+        // Opciones adicionales para pg (driver de PostgreSQL)
+        connectionTimeoutMillis: 10000, // 10 segundos
+        query_timeout: 30000, // 30 segundos para queries
+        statement_timeout: 30000, // 30 segundos para statements
+      },
+      // Retry configuration
+      retryAttempts: 3,
+      retryDelay: 3000, // 3 segundos entre reintentos
     };
   }
 }
