@@ -1,5 +1,7 @@
 # 🚀 Pasos Post-Deployment en Railway
 
+> ⚠️ **Si ves error 502 Bad Gateway**, consulta [SOLUCION_502_RAILWAY.md](./SOLUCION_502_RAILWAY.md) para diagnóstico y solución.
+
 Una vez que ambos servicios (backend y frontend) están desplegados en Railway, sigue estos pasos para configurar todo correctamente.
 
 ## 📋 Paso 1: Obtener las URLs de tus Servicios
@@ -49,8 +51,11 @@ DB_DATABASE=postgres
 # Opción 2: Usar Pooler (RECOMENDADO para Railway)
 DB_HOST=aws-1-us-east-1.pooler.supabase.com
 DB_USERNAME=postgres.xxxxx  # Formato: postgres.PROJECT_REF
-DB_PORT=6543  # Puerto del pooler (6543 para session mode, 5432 para transaction mode)
-# NOTA: No uses DB_HOST_IPV6 con pooler, Railway puede no tener soporte IPv6
+DB_PORT=5432  # Puerto del pooler: 5432 (transaction mode) o 6543 (session mode)
+# NOTA: 
+# - Puerto 5432: Transaction mode (recomendado para TypeORM, abre/cierra conexiones)
+# - Puerto 6543: Session mode (mantiene sesión abierta, mejor para muchas conexiones)
+# - No uses DB_HOST_IPV6 con pooler, Railway puede no tener soporte IPv6
 
 # Opción 3: IP IPv6 directa (NO RECOMENDADO para Railway)
 # Railway puede no tener soporte IPv6 habilitado, causando error ENETUNREACH

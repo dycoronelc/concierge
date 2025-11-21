@@ -40,12 +40,18 @@ async function resolveDatabaseHost() {
 }
 
 // Resolver antes de inicializar NestJS
-resolveDatabaseHost().then(() => {
-  bootstrap();
-}).catch((error) => {
-  console.error('[Startup] Error crítico al resolver DNS:', error);
-  process.exit(1);
-});
+resolveDatabaseHost()
+  .then(() => {
+    console.log('[Startup] DNS resuelto, iniciando aplicación...');
+    bootstrap();
+  })
+  .catch((error) => {
+    console.error('[Startup] Error crítico al resolver DNS:', error);
+    console.error('[Startup] Stack:', error.stack);
+    // No salir inmediatamente, dejar que bootstrap() intente iniciar
+    // TypeORM mostrará un error más específico si la conexión falla
+    bootstrap();
+  });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -81,7 +87,20 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT || 3000;
-  await app.listen(port, '0.0.0.0'); // Escuchar en todas las interfaces para Railway
-  console.log(`🚀 Concierge API running on: http://0.0.0.0:${port}`);
+  
+  // Log importante para debugging
+  console.log(`[Startup] Iniciando servidor en puerto ${port}...`);
+  console.log(`[Startup] NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+  console.log(`[Startup] DB_HOST: ${process.env.DB_HOST || 'NOT SET'}`);
+  
+  try {
+    await app.listen(port, '0.0.0.0'); // Escuchar en todas las interfaces para Railway
+    console.log(`🚀 Concierge API running on: http://0.0.0.0:${port}`);
+    console.log(`[Startup] Servidor iniciado correctamente`);
+  } catch (error) {
+    console.error('[Startup] Error al iniciar servidor:', error);
+    console.error('[Startup] Stack:', error.stack);
+    process.exit(1);
+  }
 }
 
