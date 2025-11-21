@@ -12,6 +12,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const host = this.configService.get<string>('DB_HOST');
+    const hostIPv6 = this.configService.get<string>('DB_HOST_IPV6');
     
     // Validar que DB_HOST esté configurado
     if (!host || host.trim() === '') {
@@ -19,6 +20,9 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       console.error(errorMsg);
       throw new Error(errorMsg);
     }
+    
+    // Si DB_HOST_IPV6 está configurado, usarlo directamente (para evitar problemas de DNS)
+    const finalHost = hostIPv6 && hostIPv6.trim() !== '' ? hostIPv6.trim() : host;
     
     const isSupabase = host.includes('supabase.co') || host.includes('pooler.supabase.com');
     const isPooler = host.includes('pooler.supabase.com');
@@ -28,13 +32,17 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
     const needsSSL = isSupabase || isProduction;
 
     // Log para debugging
-    console.log(`[Database] Intentando conectar a: ${host}:${this.configService.get<number>('DB_PORT', 5432)}`);
+    if (hostIPv6) {
+      console.log(`[Database] Usando IP IPv6 directa: ${finalHost} (hostname original: ${host})`);
+    } else {
+      console.log(`[Database] Intentando conectar a: ${finalHost}:${this.configService.get<number>('DB_PORT', 5432)}`);
+    }
     console.log(`[Database] Tipo: ${isPooler ? 'Session Pooler' : 'Direct'}`);
     console.log(`[Database] SSL requerido: ${needsSSL}`);
 
     return {
       type: 'postgres',
-      host: host,
+      host: finalHost,
       port: this.configService.get<number>('DB_PORT', 5432),
       username: this.configService.get<string>('DB_USERNAME', 'flowcare'),
       password: this.configService.get<string>('DB_PASSWORD', 'flowcare123'),

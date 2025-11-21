@@ -92,8 +92,8 @@ export function applyDnsFix() {
       return originalLookup(hostname, options, callback);
     }
 
-    // Si es Supabase, usar cache o resolver
-    if (hostname.includes('supabase.co')) {
+    // Si es Supabase o pooler, usar cache o resolver
+    if (hostname.includes('supabase.co') || hostname.includes('pooler.supabase.com')) {
       const cachedIp = dnsCache.get(hostname);
       
       if (cachedIp && actualCallback && typeof actualCallback === 'function') {

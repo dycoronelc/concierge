@@ -16,11 +16,12 @@ async function resolveDatabaseHost() {
     console.error('[Startup] ⚠️  DB_HOST no está configurado en las variables de entorno');
     console.error('[Startup] Por favor, configura DB_HOST en Railway: Settings → Variables');
     console.error('[Startup] Ejemplo: DB_HOST=db.xxxxx.supabase.co');
+    console.error('[Startup] O con pooler: DB_HOST=aws-0-us-east-1.pooler.supabase.com');
     // No salir aquí, dejar que TypeORM muestre el error más específico
     return;
   }
   
-  if (dbHost.includes('supabase.co')) {
+  if (dbHost.includes('supabase.co') || dbHost.includes('pooler.supabase.com')) {
     try {
       console.log(`[Startup] Resolviendo IP IPv6 para ${dbHost}...`);
       const ipv6 = await resolveSupabaseHost(dbHost);
