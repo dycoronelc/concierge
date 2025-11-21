@@ -20,6 +20,14 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    port: 4173,
+    host: '0.0.0.0',
+    allowedHosts: [
+      'concierge-front-production.up.railway.app',
+      '.railway.app', // Permitir todos los subdominios de Railway
+    ],
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
