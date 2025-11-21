@@ -46,14 +46,16 @@ DB_USERNAME=postgres
 DB_PASSWORD=tu-password-de-supabase
 DB_DATABASE=postgres
 
-# Opción 2: Usar Pooler (si la conexión directa falla)
-# DB_HOST=aws-0-us-east-1.pooler.supabase.com
-# DB_USERNAME=postgres.xxxxx  # Formato: postgres.PROJECT_REF
-# DB_PORT=6543  # Puerto del pooler (6543 para session mode, 5432 para transaction mode)
+# Opción 2: Usar Pooler (RECOMENDADO para Railway)
+DB_HOST=aws-1-us-east-1.pooler.supabase.com
+DB_USERNAME=postgres.xxxxx  # Formato: postgres.PROJECT_REF
+DB_PORT=6543  # Puerto del pooler (6543 para session mode, 5432 para transaction mode)
+# NOTA: No uses DB_HOST_IPV6 con pooler, Railway puede no tener soporte IPv6
 
-# Opción 3: IP IPv6 directa (si hay problemas de DNS)
+# Opción 3: IP IPv6 directa (NO RECOMENDADO para Railway)
+# Railway puede no tener soporte IPv6 habilitado, causando error ENETUNREACH
 # DB_HOST_IPV6=2600:1f18:2e13:9d3a:4eed:6b96:4d6d:4207
-# Si configuras DB_HOST_IPV6, se usará en lugar de DB_HOST para evitar problemas de DNS
+# Solo usar si Railway tiene IPv6 habilitado y la conexión directa falla
 ```
 
 **⚠️ IMPORTANTE:** Si `DB_HOST` no está configurado, verás el error:
@@ -189,6 +191,20 @@ Si quieres usar un dominio personalizado:
   - `DB_USERNAME`
   - `DB_PASSWORD`
   - `DB_DATABASE`
+
+### Error: "connect ENETUNREACH" con IPv6
+
+**Solución:**
+- **Railway puede no tener soporte IPv6 habilitado**
+- **NO uses `DB_HOST_IPV6` con pooler** - siempre usa el hostname del pooler
+- Si estás usando pooler, configura:
+  ```env
+  DB_HOST=aws-1-us-east-1.pooler.supabase.com
+  DB_USERNAME=postgres.xxxxx
+  DB_PORT=6543
+  ```
+- **Elimina `DB_HOST_IPV6`** de las variables de entorno si está causando problemas
+- El código ahora prioriza el hostname sobre IPv6 directa para mejor compatibilidad
 
 ### Error: "CORS policy"
 

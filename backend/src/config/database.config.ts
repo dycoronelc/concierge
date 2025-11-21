@@ -21,29 +21,40 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       throw new Error(errorMsg);
     }
     
-    // Si DB_HOST_IPV6 está configurado, usarlo directamente (para evitar problemas de DNS)
-    const finalHost = hostIPv6 && hostIPv6.trim() !== '' ? hostIPv6.trim() : host;
-    
     const isSupabase = host.includes('supabase.co') || host.includes('pooler.supabase.com');
     const isPooler = host.includes('pooler.supabase.com');
     const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
+    
+    // Para pooler, SIEMPRE usar el hostname (no la IP IPv6 directa)
+    // La IP IPv6 solo se usa para conexiones directas si es necesario
+    // Railway puede no tener soporte IPv6, así que es mejor usar el hostname del pooler
+    let finalHost = host;
+    if (hostIPv6 && hostIPv6.trim() !== '' && !isPooler) {
+      // Solo usar IPv6 para conexiones directas (no pooler)
+      // Pero en Railway es mejor usar el hostname siempre
+      console.log(`[Database] IPv6 configurada pero usando hostname para mejor compatibilidad: ${host}`);
+      // finalHost = hostIPv6.trim(); // Comentado: Railway puede no soportar IPv6
+    }
+    
+    // Determinar puerto: pooler usa 6543 por defecto, directo usa 5432
+    const defaultPort = isPooler ? 6543 : 5432;
+    const port = this.configService.get<number>('DB_PORT', defaultPort);
     
     // Supabase siempre requiere SSL, y producción también
     const needsSSL = isSupabase || isProduction;
 
     // Log para debugging
-    if (hostIPv6) {
-      console.log(`[Database] Usando IP IPv6 directa: ${finalHost} (hostname original: ${host})`);
-    } else {
-      console.log(`[Database] Intentando conectar a: ${finalHost}:${this.configService.get<number>('DB_PORT', 5432)}`);
-    }
+    console.log(`[Database] Intentando conectar a: ${finalHost}:${port}`);
     console.log(`[Database] Tipo: ${isPooler ? 'Session Pooler' : 'Direct'}`);
     console.log(`[Database] SSL requerido: ${needsSSL}`);
+    if (hostIPv6 && !isPooler) {
+      console.log(`[Database] IPv6 disponible pero usando hostname para compatibilidad con Railway`);
+    }
 
     return {
       type: 'postgres',
       host: finalHost,
-      port: this.configService.get<number>('DB_PORT', 5432),
+      port: port,
       username: this.configService.get<string>('DB_USERNAME', 'flowcare'),
       password: this.configService.get<string>('DB_PASSWORD', 'flowcare123'),
       database: this.configService.get<string>('DB_DATABASE', 'flowcare'),
