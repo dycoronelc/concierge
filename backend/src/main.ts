@@ -10,7 +10,17 @@ applyDnsFix();
 // Resolver IP IPv6 al inicio si es Supabase
 async function resolveDatabaseHost() {
   const dbHost = process.env.DB_HOST;
-  if (dbHost && dbHost.includes('supabase.co')) {
+  
+  // Validar que DB_HOST esté configurado
+  if (!dbHost) {
+    console.error('[Startup] ⚠️  DB_HOST no está configurado en las variables de entorno');
+    console.error('[Startup] Por favor, configura DB_HOST en Railway: Settings → Variables');
+    console.error('[Startup] Ejemplo: DB_HOST=db.xxxxx.supabase.co');
+    // No salir aquí, dejar que TypeORM muestre el error más específico
+    return;
+  }
+  
+  if (dbHost.includes('supabase.co')) {
     try {
       console.log(`[Startup] Resolviendo IP IPv6 para ${dbHost}...`);
       const ipv6 = await resolveSupabaseHost(dbHost);
@@ -23,6 +33,8 @@ async function resolveDatabaseHost() {
     } catch (error) {
       console.error(`[Startup] Error resolviendo IPv6:`, error);
     }
+  } else {
+    console.log(`[Startup] DB_HOST no es Supabase, usando resolución DNS estándar`);
   }
 }
 

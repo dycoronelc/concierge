@@ -11,7 +11,15 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    const host = this.configService.get<string>('DB_HOST', 'localhost');
+    const host = this.configService.get<string>('DB_HOST');
+    
+    // Validar que DB_HOST esté configurado
+    if (!host || host.trim() === '') {
+      const errorMsg = '[Database] ⚠️  DB_HOST no está configurado. Por favor, configura DB_HOST en Railway: Settings → Variables';
+      console.error(errorMsg);
+      throw new Error(errorMsg);
+    }
+    
     const isSupabase = host.includes('supabase.co') || host.includes('pooler.supabase.com');
     const isPooler = host.includes('pooler.supabase.com');
     const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
@@ -19,12 +27,10 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
     // Supabase siempre requiere SSL, y producción también
     const needsSSL = isSupabase || isProduction;
 
-    // Log para debugging (solo en desarrollo)
-    if (this.configService.get<string>('NODE_ENV') === 'development') {
-      console.log(`[Database] Intentando conectar a: ${host}:${this.configService.get<number>('DB_PORT', 5432)}`);
-      console.log(`[Database] Tipo: ${isPooler ? 'Session Pooler' : 'Direct'}`);
-      console.log(`[Database] SSL requerido: ${needsSSL}`);
-    }
+    // Log para debugging
+    console.log(`[Database] Intentando conectar a: ${host}:${this.configService.get<number>('DB_PORT', 5432)}`);
+    console.log(`[Database] Tipo: ${isPooler ? 'Session Pooler' : 'Direct'}`);
+    console.log(`[Database] SSL requerido: ${needsSSL}`);
 
     return {
       type: 'postgres',

@@ -63,11 +63,13 @@ export function applyDnsFix() {
     }
 
     // Validar hostname
-    if (!hostname || typeof hostname !== 'string') {
+    if (!hostname || typeof hostname !== 'string' || hostname.trim() === '') {
+      console.error(`[DNS Fix] ⚠️  Hostname inválido recibido: ${hostname}`);
       if (actualCallback && typeof actualCallback === 'function') {
-        return setImmediate(() => actualCallback(new Error('Invalid hostname'), null));
+        return setImmediate(() => actualCallback(new Error(`Invalid hostname: ${hostname || 'undefined'}`), null));
       }
-      return originalLookup(hostname, options, callback);
+      // Si no hay callback, intentar con el método original pero probablemente fallará
+      return originalLookup(hostname || 'localhost', options, callback);
     }
 
     // Si es una IP directa (IPv4 o IPv6), usar el método original
