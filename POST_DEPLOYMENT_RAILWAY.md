@@ -39,11 +39,21 @@ Una vez que ambos servicios (backend y frontend) están desplegados en Railway, 
 
 ```env
 # Base de Datos (Supabase) - ⚠️ OBLIGATORIO
+# Opción 1: Conexión directa (recomendado si funciona)
 DB_HOST=db.xxxxx.supabase.co
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=tu-password-de-supabase
 DB_DATABASE=postgres
+
+# Opción 2: Usar Pooler (si la conexión directa falla)
+# DB_HOST=aws-0-us-east-1.pooler.supabase.com
+# DB_USERNAME=postgres.xxxxx  # Formato: postgres.PROJECT_REF
+# DB_PORT=6543  # Puerto del pooler (6543 para session mode, 5432 para transaction mode)
+
+# Opción 3: IP IPv6 directa (si hay problemas de DNS)
+# DB_HOST_IPV6=2600:1f18:2e13:9d3a:4eed:6b96:4d6d:4207
+# Si configuras DB_HOST_IPV6, se usará en lugar de DB_HOST para evitar problemas de DNS
 ```
 
 **⚠️ IMPORTANTE:** Si `DB_HOST` no está configurado, verás el error:
@@ -71,13 +81,35 @@ FRONTEND_URL=https://concierge-frontend-xxxxx.railway.app
 
 ### Cómo obtener las credenciales de Supabase:
 
+**Opción 1: Conexión Directa (Recomendado)**
 1. Ve a tu proyecto en [Supabase Dashboard](https://app.supabase.com)
 2. Ve a **Settings** → **Database**
 3. Copia:
    - **Host:** `db.xxxxx.supabase.co` (en "Connection string")
-   - **Password:** Tu contraseña de base de datos (si no la recuerdas, puedes resetearla)
+   - **Password:** Tu contraseña de base de datos
    - **Port:** `5432`
    - **Database:** `postgres`
+
+**Opción 2: Usar Pooler (Si la conexión directa falla)**
+1. En Supabase Dashboard → **Settings** → **Database**
+2. Busca la sección **"Connection Pooling"**
+3. Copia:
+   - **Host:** `aws-0-us-east-1.pooler.supabase.com` (o similar según tu región)
+   - **Username:** `postgres.xxxxx` (formato: `postgres.PROJECT_REF`)
+   - **Port:** `6543` (session mode) o `5432` (transaction mode)
+   - **Password:** Tu contraseña de base de datos
+
+**Opción 3: IP IPv6 Directa (Si hay problemas de DNS)**
+1. Resuelve la IP IPv6 de tu hostname:
+   ```bash
+   # En Windows PowerShell:
+   Resolve-DnsName -Name db.xxxxx.supabase.co -Type AAAA
+   
+   # O en Linux/Mac:
+   dig AAAA db.xxxxx.supabase.co
+   ```
+2. Copia la IP IPv6 (ejemplo: `2600:1f18:2e13:9d3a:4eed:6b96:4d6d:4207`)
+3. Configura `DB_HOST_IPV6` con esa IP
 
 ## ⚙️ Paso 3: Configurar Variables de Entorno del Frontend
 
